@@ -2,7 +2,20 @@ import requests
 import json
 
 def emotion_detector(text_to_analyse):
-    
+    '''
+    This function takes input from index.html
+    '''
+    if text_to_analyse.strip() == "":
+        formatted_response = {
+            "anger": None,
+            "disgust": None,
+            "fear": None,
+            "joy": None,
+            "sadness": None,
+            "dominant_emotion": None
+        }
+        return formatted_response
+
     url = 'https://sn-watson-emotion.labs.skills.network/v1/watson.runtime.nlp.v1/NlpService/EmotionPredict'
     
     header = {"grpc-metadata-mm-model-id": "emotion_aggregated-workflow_lang_en_stock"}
@@ -11,7 +24,7 @@ def emotion_detector(text_to_analyse):
     
     response = requests.post(url, json = myobj, headers=header)
     formatted_response = json.loads(response.text)
-
+    
     # Check for response status code of 200, then extract scores and dominant emotion
     if response.status_code == 200:
         
@@ -35,8 +48,15 @@ def emotion_detector(text_to_analyse):
             "sadness": sadness_score,
             "dominant_emotion": dominant_emotion
         }
-    elif response.status_code == 500:
-        formatted_response == None
+    elif response.status_code == 400:
+        formatted_response = {
+            "anger": None,
+            "disgust": None,
+            "fear": None,
+            "joy": None,
+            "sadness": None,
+            "dominant_emotion": None
+        }
 
     return(formatted_response)
     
